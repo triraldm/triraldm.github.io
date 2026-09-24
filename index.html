@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="TriRaLDM: Triplane Latent Diffusion Model for 4D Radar Map Enhancement.">
+  <title>TriRaLDM: Triplane Latent Diffusion Model for 4D Radar Map Enhancement</title>
+  <link rel="stylesheet" href="style.css?v=20260924-5">
+</head>
+<body>
+  <nav class="page-nav" aria-label="Page sections">
+    <a class="nav-brand" href="#top">TriRaLDM</a>
+    <div class="nav-links">
+      <a href="#abstract">Abstract</a>
+      <a href="#method">Method</a>
+      <a href="#vod">Experiments on VoD</a>
+      <a href="#extended">Extended experiments</a>
+    </div>
+  </nav>
+
+  <main class="page" id="top">
+    <header class="paper-title">
+      <h1>TriRaLDM: Triplane Latent Diffusion Model for 4D Radar Map Enhancement</h1>
+    </header>
+
+    <section class="paper-section" id="abstract">
+      <h2>Abstract</h2>
+      <p>4D millimeter-wave radar has attracted increasing attention due to its robustness under adverse conditions, but its sparse and noisy data often result in maps with unclear details. Meanwhile, most radar enhancement methods rely on point-proxy or planar representations, which may compromise spatial continuity and 3D geometric modeling, respectively. To this end, we propose TriRaLDM, a generative framework that enhances 4D radar maps toward denser and more complete geometric representations via patch-wise restoration in a triplane space, which compactly preserves 3D structural information while maintaining spatial continuity. Within this representation, a diffusion process progressively restores radar map geometry by exploiting complementary spatial cues across the three orthogonal planes. LiDAR provides geometric supervision during training, whereas inference requires only radar input. The restored features are decoded into enhanced point-cloud patches, with radar observations serving as spatial priors. Experiments on the View-of-Delft dataset show that TriRaLDM achieves superior performance in 4D radar map enhancement.</p>
+    </section>
+
+    <section class="paper-section" id="method">
+      <h2>Method</h2>
+      <p class="figure-title"><strong>Pipeline.</strong> Stage I trains a shared triplane encoder and radar-guided geometric decoder (RGGD). Stage II learns to restore radar latents toward corresponding LiDAR latents through reverse diffusion, with Point-Line Cross-Plane Attention (PLCA) and a Soft Geometric Constraint (SGC). Inference uses radar input only.</p>
+      <figure>
+        <img class="pipeline" src="assets/method-pipeline-preview.jpg" alt="TriRaLDM two-stage pipeline with shared triplane encoding, radar-guided decoding, latent diffusion, PLCA, and geometric supervision" loading="lazy">
+      </figure>
+    </section>
+
+    <section class="paper-section" id="vod">
+      <h2>Experiments on View-of-Delft</h2>
+      <p class="section-intro">We evaluate patch-level 3D reconstruction, patch-level bird's-eye-view (BEV) reconstruction, and full-map 3D reconstruction on the View-of-Delft (VoD) dataset.</p>
+
+      <section class="experiment">
+        <h3>Patch-level 3D reconstruction</h3>
+        <p class="figure-title">Qualitative comparisons of patch-level 3D point-cloud reconstruction on the VoD dataset. TriRaLDM recovers local structures with clearer boundaries and fewer scattered responses.</p>
+        <figure>
+          <img src="assets/vod-patch-preview.jpg" alt="Patch-level 3D reconstruction comparisons on VoD across Radar, PoinTr, AdaPoinTr, RMap, LiDPM, TriRaLDM, and LiDAR" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of patch-level 3D reconstruction on VoD.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>F-Score ↑<br>@ 0.1 m</th><th>F-Score ↑<br>@ 0.3 m</th><th>CD (m) ↓</th><th>HD (m) ↓</th><th>MHD (m) ↓</th></tr></thead><tbody>
+          <tr><td>PoinTr</td><td>0.181</td><td>0.708</td><td>0.506</td><td>6.402</td><td>0.324</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.265</td><td>0.725</td><td>0.597</td><td>4.597</td><td>0.310</td></tr>
+          <tr><td>RMap</td><td>0.195</td><td>0.719</td><td>0.721</td><td>4.860</td><td>0.377</td></tr>
+          <tr><td>LiDiff</td><td>0.137</td><td>0.325</td><td>3.477</td><td>9.257</td><td>1.094</td></tr>
+          <tr><td>LiDPM</td><td>0.258</td><td>0.506</td><td>2.425</td><td>6.777</td><td>0.867</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.455</b></td><td><b>0.765</b></td><td><b>0.436</b></td><td>4.049</td><td><b>0.304</b></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="experiment">
+        <h3>Patch-level BEV reconstruction</h3>
+        <p class="figure-title">Qualitative comparisons of patch-level BEV reconstruction on the VoD dataset. Each column corresponds to a method.</p>
+        <figure class="bev-figure">
+          <img src="assets/vod-bev-preview.jpg" alt="Patch-level BEV reconstruction comparisons on VoD across RadarHD, RMap, AdaPoinTr, LiDPM, TriRaLDM, and LiDAR" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of patch-level BEV reconstruction on VoD.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>CD ↓</th><th>MHD ↓</th><th>UCD ↓</th><th>UMHD ↓</th><th>FID ↓</th></tr></thead><tbody>
+          <tr><td>RadarHD</td><td>0.826</td><td>0.198</td><td>0.712</td><td>0.198</td><td>225.648</td></tr>
+          <tr><td>PoinTr</td><td>0.832</td><td>0.224</td><td>0.685</td><td>0.182</td><td>272.935</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.602</td><td>0.160</td><td>0.444</td><td>0.145</td><td>274.617</td></tr>
+          <tr><td>RMap</td><td>0.746</td><td>0.208</td><td>0.542</td><td>0.196</td><td>283.782</td></tr>
+          <tr><td>LiDiff</td><td>1.120</td><td>0.409</td><td>0.831</td><td>0.376</td><td>339.635</td></tr>
+          <tr><td>LiDPM</td><td>1.017</td><td>0.456</td><td>0.922</td><td>0.456</td><td>302.897</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.332</b></td><td><b>0.071</b></td><td><b>0.120</b></td><td><b>0.005</b></td><td><b>108.791</b></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="experiment">
+        <h3>Full-map 3D reconstruction</h3>
+        <p class="figure-title">Qualitative comparisons of map-level 3D point-cloud reconstruction on VoD. (a) and (b) show sequences 06 and 19, respectively; point counts and F-Scores are reported in the figure.</p>
+        <figure>
+          <img src="assets/vod-map-preview.jpg" alt="Full-map reconstruction comparisons on VoD sequences 06 and 19, with point counts and F-Scores" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of map-level 3D reconstruction on VoD.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>F-Score ↑<br>@ 0.1 m</th><th>F-Score ↑<br>@ 0.3 m</th><th>CD (m) ↓</th><th>HD (m) ↓</th><th>MHD (m) ↓</th></tr></thead><tbody>
+          <tr><td>RadarMap</td><td>0.095</td><td>0.432</td><td>3.349</td><td>41.229</td><td>0.630</td></tr>
+          <tr><td>RMap</td><td>0.134</td><td>0.500</td><td>1.861</td><td>12.427</td><td>0.727</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.177</td><td>0.552</td><td>1.636</td><td>12.329</td><td>0.627</td></tr>
+          <tr><td>LiDPM</td><td>0.181</td><td>0.459</td><td>2.215</td><td>13.727</td><td>0.820</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.357</b></td><td><b>0.674</b></td><td><b>1.681</b></td><td><b>11.019</b></td><td><b>0.528</b></td></tr>
+        </tbody></table></div>
+      </section>
+    </section>
+
+    <section class="paper-section" id="extended">
+      <h2>Extended Experiments</h2>
+
+      <section class="experiment" id="localization">
+        <h3>Downstream task: localization</h3>
+        <p>We evaluate whether enhanced map geometry benefits scan-to-map localization on VoD. The same radar scans and ICP-based localization pipeline are used with different global map sources; only the reference map changes. TriRaLDM achieves the lowest errors across all three reported metrics on both test sequences.</p>
+        <p class="figure-title">Trajectory comparisons for localization on the VoD dataset. Estimated trajectories obtained using different reference maps are compared with ground truth on sequences 04 and 19.</p>
+        <figure>
+          <img src="assets/vod-localization-preview.jpg" alt="Estimated localization trajectories using LiDAR, 4D Radar, RMap, LiDPM, TriRaLDM, and ground truth on VoD sequences 04 and 19" loading="lazy">
+          </figure>
+        <div class="table-title">Localization results on the VoD test sequences.</div>
+                <div class="table-wrap"><table class="localization-table"><colgroup><col class="col-sequence"><col class="col-frames"><col class="col-map"><col class="col-ate"><col class="col-rpe-m"><col class="col-rpe-deg"></colgroup><thead><tr><th>Sequence</th><th>Frames</th><th>Reference map</th><th>ATE RMSE ↓ (m)</th><th>RPE ↓ (m)</th><th>RPE ↓ (deg)</th></tr></thead><tbody>
+          <tr><td class="sequence-cell" rowspan="5">Seq. 04</td><td class="frames-cell" rowspan="5">397</td><td class="map-cell">4D Radar</td><td>0.762</td><td>0.744</td><td>2.680</td></tr>
+          <tr><td class="map-cell">LiDAR</td><td>0.864</td><td>0.360</td><td>2.125</td></tr>
+          <tr><td class="map-cell">RMap</td><td>26.914</td><td>0.775</td><td>2.559</td></tr>
+          <tr><td class="map-cell">LiDPM</td><td>47.571</td><td>1.122</td><td>2.264</td></tr>
+          <tr class="ours"><td class="map-cell">TriRaLDM</td><td><b>0.613</b></td><td><b>0.297</b></td><td><b>1.785</b></td></tr>
+          <tr class="group-start"><td class="sequence-cell" rowspan="5">Seq. 19</td><td class="frames-cell" rowspan="5">784</td><td class="map-cell">4D Radar</td><td>72.876</td><td>1.582</td><td>6.125</td></tr>
+          <tr><td class="map-cell">LiDAR</td><td>1.062</td><td>0.395</td><td>1.895</td></tr>
+          <tr><td class="map-cell">RMap</td><td>93.268</td><td>2.197</td><td>4.595</td></tr>
+          <tr><td class="map-cell">LiDPM</td><td>68.704</td><td>1.609</td><td>4.395</td></tr>
+          <tr class="ours"><td class="map-cell">TriRaLDM</td><td><b>0.744</b></td><td><b>0.332</b></td><td><b>1.727</b></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="experiment" id="truckscenes">
+        <h3>Experiments on MAN TruckScenes</h3>
+        <p>To evaluate generalization beyond VoD, we conduct patch-level 3D, patch-level BEV, and full-map 3D reconstruction experiments on MAN TruckScenes. The dataset provides a different radar configuration, driving scenes, and radar-data distribution. All compared methods use the same preprocessing and evaluation protocol.</p>
+
+        <h4>Patch-level 3D reconstruction</h4>
+        <p class="figure-title">Qualitative comparisons of patch-level 3D reconstruction on MAN TruckScenes.</p>
+        <figure>
+          <img src="assets/truckscenes-patch-preview.jpg" alt="Patch-level 3D reconstruction comparisons on MAN TruckScenes" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of patch-level 3D reconstruction on MAN TruckScenes.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>F-Score ↑<br>@ 0.1 m</th><th>F-Score ↑<br>@ 0.3 m</th><th>CD (m) ↓</th><th>HD (m) ↓</th><th>MHD (m) ↓</th></tr></thead><tbody>
+          <tr><td>PoinTr</td><td>0.155</td><td>0.749</td><td>0.539</td><td>7.511</td><td>0.280</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.260</td><td>0.757</td><td>0.457</td><td>4.897</td><td>0.314</td></tr>
+          <tr><td>RMap</td><td>0.324</td><td>0.779</td><td>0.467</td><td>4.646</td><td>0.300</td></tr>
+          <tr><td>LiDiff</td><td>0.050</td><td>0.253</td><td>3.518</td><td>9.849</td><td>0.995</td></tr>
+          <tr><td>LiDPM</td><td>0.151</td><td>0.390</td><td>2.875</td><td>9.519</td><td>0.986</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.498</b></td><td><b>0.819</b></td><td><b>0.375</b></td><td><b>3.968</b></td><td><b>0.279</b></td></tr>
+        </tbody></table></div>
+
+        <h4>Patch-level BEV reconstruction</h4>
+        <p class="figure-title">Qualitative comparisons of patch-level BEV reconstruction on MAN TruckScenes.</p>
+        <figure class="bev-figure">
+          <img src="assets/truckscenes-bev-preview.jpg" alt="Patch-level BEV reconstruction comparisons on MAN TruckScenes" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of patch-level BEV reconstruction on MAN TruckScenes.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>CD ↓</th><th>MHD ↓</th><th>UCD ↓</th><th>UMHD ↓</th><th>FID ↓</th></tr></thead><tbody>
+          <tr><td>RadarHD</td><td>0.795</td><td>0.338</td><td>0.732</td><td>0.338</td><td>216.962</td></tr>
+          <tr><td>PoinTr</td><td>0.914</td><td>0.288</td><td>0.799</td><td>0.269</td><td>233.274</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.486</td><td>0.152</td><td>0.326</td><td>0.127</td><td>262.292</td></tr>
+          <tr><td>RMap</td><td>0.465</td><td>0.123</td><td>0.295</td><td>0.091</td><td>246.374</td></tr>
+          <tr><td>LiDiff</td><td>1.452</td><td>0.542</td><td>0.979</td><td>0.295</td><td>312.657</td></tr>
+          <tr><td>LiDPM</td><td>1.409</td><td>0.704</td><td>1.232</td><td>0.699</td><td>328.242</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.287</b></td><td><b>0.077</b></td><td><b>0.044</b></td><td><b>0.003</b></td><td><b>105.623</b></td></tr>
+        </tbody></table></div>
+
+        <h4>Full-map 3D reconstruction</h4>
+        <p class="figure-title">Qualitative comparisons of full-map reconstruction on two representative MAN TruckScenes test scenes. Point counts and F-Scores are shown in the figure.</p>
+        <figure>
+          <img src="assets/truckscenes-map-preview.jpg" alt="Full-map reconstruction comparisons on two MAN TruckScenes test scenes, with point counts and F-Scores" loading="lazy">
+          </figure>
+        <div class="table-title">Quantitative results of map-level 3D reconstruction on MAN TruckScenes.</div>
+        <div class="table-wrap"><table><thead><tr><th>Method</th><th>F-Score ↑<br>@ 0.1 m</th><th>F-Score ↑<br>@ 0.3 m</th><th>CD (m) ↓</th><th>HD (m) ↓</th><th>MHD (m) ↓</th></tr></thead><tbody>
+          <tr><td>RadarMap</td><td>0.107</td><td>0.431</td><td>10.829</td><td>37.165</td><td>1.404</td></tr>
+          <tr><td>RMap</td><td>0.167</td><td>0.488</td><td>5.103</td><td>17.818</td><td>1.142</td></tr>
+          <tr><td>AdaPoinTr</td><td>0.130</td><td>0.506</td><td>4.662</td><td>17.622</td><td>1.148</td></tr>
+          <tr><td>LiDPM</td><td>0.111</td><td>0.372</td><td>7.284</td><td>18.117</td><td>1.678</td></tr>
+          <tr class="ours"><td>TriRaLDM</td><td><b>0.430</b></td><td><b>0.689</b></td><td><b>3.626</b></td><td>17.653</td><td><b>0.689</b></td></tr>
+        </tbody></table></div>
+      </section>
+    </section>
+
+    <footer><a href="#top">Back to top ↑</a></footer>
+  </main>
+</body>
+</html>
