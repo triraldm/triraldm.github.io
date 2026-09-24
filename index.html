@@ -31,9 +31,9 @@
 
     <section class="paper-section" id="method">
       <h2>Method</h2>
-      <p class="figure-title"><strong>Pipeline.</strong> Stage I trains a shared triplane encoder and radar-guided geometric decoder (RGGD). Stage II learns to restore radar latents toward corresponding LiDAR latents through reverse diffusion, with Point-Line Cross-Plane Attention (PLCA) and a Soft Geometric Constraint (SGC). Inference uses radar input only.</p>
+      <p class="figure-title"><strong>Pipeline.</strong> Stage I trains a shared triplane encoder and Point-Guided Geometric Decoder (PGGD). Stage II learns to restore radar latents toward corresponding LiDAR latents through reverse diffusion, with Point-Line Cross-Plane Attention (PLCA) and a Soft Geometric Constraint (SGC). Inference uses radar input only.</p>
       <figure>
-        <img class="pipeline" src="assets/method-pipeline-preview.jpg" alt="TriRaLDM two-stage pipeline with shared triplane encoding, radar-guided decoding, latent diffusion, PLCA, and geometric supervision" loading="lazy">
+        <img class="pipeline" src="assets/method-pipeline-pggd.jpg" alt="TriRaLDM two-stage pipeline with shared triplane encoding, Point-Guided Geometric Decoder (PGGD), latent diffusion, PLCA, and geometric supervision" loading="lazy">
       </figure>
     </section>
 
